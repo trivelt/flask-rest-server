@@ -52,7 +52,7 @@ class TestClientsListApi(unittest.TestCase):
         response = self.client.post('/clients', data=json.dumps({'name': name, 'ip_address': ip_address}),
                                     content_type='application/json')
 
-        assert_status_code_equal(response, status.HTTP_201_CREATED)
+        assert_successfully_created(response)
         self.assertEqual(len(Client.query.filter(Client.name == name, Client.ip_address == ip_address).all()), 1)
 
     def test_client_not_created_because_of_wrong_input_data(self):
