@@ -23,7 +23,7 @@ class TestClientsListApi(unittest.TestCase):
         assert_success(response)
         self.assertEqual(response.get_json(), [])
 
-    def test_get_one_client(self):
+    def test_get_one_element_clients_list(self):
         client = Client(name="Foo", ip_address="localhost")
         db.session.add(client)
         db.session.commit()
@@ -69,7 +69,7 @@ class TestClientsListApi(unittest.TestCase):
         assert_status_code_equal(response, status.HTTP_409_CONFLICT)
 
 
-    @mock.patch('app.db.session.commit')
+    @mock.patch('app.db.session.add')
     def test_internal_server_error_during_add_client(self, dbMock):
         dbMock.side_effect = Exception()
         response = self.client.post('/clients', data=json.dumps({'name': 10, 'ip_address': 20}),

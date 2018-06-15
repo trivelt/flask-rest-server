@@ -10,3 +10,8 @@ class Dataset(db.Model):
 
     def __repr__(self):
         return "<Dataset(client=%s, filename=%s>" % (str(self.client), self.filename)
+
+    def json(self):
+        return {"id": self.id,
+                "client_id": self.client_id,
+                "filename": self.filename}
