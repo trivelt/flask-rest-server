@@ -10,3 +10,8 @@ class Client(db.Model):
 
     def __repr__(self):
         return "<Client(name=%s, ip=%s>" % (self.name, self.ip_address)
+
+    def json(self):
+        return {"id": self.id,
+                "name": self.name,
+                "ip_address": self.ip_address}
