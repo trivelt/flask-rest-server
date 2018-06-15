@@ -36,3 +36,16 @@ class TestClientApi(unittest.TestCase):
 
         client = Client.query.filter_by(id=client_id).first()
         self.assertEqual(client.name, new_name)
+
+    def test_cannot_delete_nonexistent_client(self):
+        response = self.client.delete('/clients/10')
+        assert_status_code_equal(response, status.HTTP_400_BAD_REQUEST)
+
+    def test_delete_client_successfully(self):
+        response = self.client.post('/clients', data=json.dumps({'name': "Client", 'ip_address': "localhost"}),
+                                    content_type='application/json')
+        assert_successfully_created(response)
+
+        response = self.client.delete('/clients/1')
+        assert_status_code_equal(response, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(Client.query.all(), [])
