@@ -20,8 +20,11 @@ class ClientApi(Resource):
 
         json_data = request.get_json()
         client = DbHelper.get_client(id)
-        client.name = json_data['name']
-        client.ip_address = json_data['ip_address']
+
+        if 'name' in json_data:
+            client.name = json_data['name']
+        if 'ip_address' in json_data:
+            client.ip_address = json_data['ip_address']
         db.session.commit()
         return '', status.HTTP_204_NO_CONTENT
 

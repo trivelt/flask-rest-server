@@ -46,7 +46,7 @@ class TestClientApi(unittest.TestCase):
                                     content_type='application/json')
         assert_successfully_created(response)
         response = self.client.patch('/clients/' + str(client_id),
-                                     data=json.dumps({'name': new_name, 'ip_address': 'localhost'}),
+                                     data=json.dumps({'name': new_name}),
                                      content_type='application/json')
         assert_status_code_equal(response, status.HTTP_204_NO_CONTENT)
 
