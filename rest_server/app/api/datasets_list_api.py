@@ -17,12 +17,12 @@ class DatasetsListApi(Resource):
             abort(status.HTTP_400_BAD_REQUEST, "Received incorrect data: %s" % str(request.get_data()))
 
         client_id = input_data['client']
-        if not DbHelper.client_id_exists(client_id):
+        client = DbHelper.get_client(client_id)
+        if not client:
             abort(status.HTTP_400_BAD_REQUEST, "Specified client %s does not exist" % client_id)
 
         new_dataset = Dataset(filename=input_data['filename'])
         self._insert_metadata(input_data, new_dataset)
-        client = DbHelper.get_client(client_id)
 
         if DbHelper.client_has_dataset(client, new_dataset):
             abort(status.HTTP_409_CONFLICT, "Could not overwrite existing dataset. "

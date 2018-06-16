@@ -15,12 +15,11 @@ class ClientApi(Resource):
             abort(status.HTTP_404_NOT_FOUND, "Could not find client %s" % id)
 
     def patch(self, id):
-        if not DbHelper.client_id_exists(id):
+        client = DbHelper.get_client(id)
+        if not client:
             return abort(status.HTTP_404_NOT_FOUND, "Could not patch non existent client")
 
         json_data = request.get_json()
-        client = DbHelper.get_client(id)
-
         if 'name' in json_data:
             client.name = json_data['name']
         if 'ip_address' in json_data:

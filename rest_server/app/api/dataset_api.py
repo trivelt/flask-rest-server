@@ -15,12 +15,11 @@ class DatasetApi(Resource):
             abort(status.HTTP_404_NOT_FOUND, "Could not find dataset %s" % id)
 
     def patch(self, id):
-        if not DbHelper.dataset_id_exists(id):
+        dataset = DbHelper.get_dataset(id)
+        if not dataset:
             abort(status.HTTP_404_NOT_FOUND, "Could not patch non existent dataset")
 
         json_data = request.get_json()
-        dataset = DbHelper.get_dataset(id)
-
         if 'client' in json_data:
             client_id = json_data['client']
             if not DbHelper.client_id_exists(client_id):

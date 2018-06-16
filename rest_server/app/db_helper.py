@@ -14,7 +14,10 @@ class DbHelper(object):
 
     @staticmethod
     def get_client(id):
-        return Client.query.filter_by(id=id).one()
+        try:
+            return Client.query.filter_by(id=id).one()
+        except:
+            return None
 
     @staticmethod
     def client_has_dataset(client, dataset):
@@ -29,4 +32,7 @@ class DbHelper(object):
 
     @staticmethod
     def get_dataset(id):
-        return Dataset.query.filter_by(id=id).one()
+        try:
+            return Dataset.query.filter_by(id=id).one()
+        except:
+            return None
