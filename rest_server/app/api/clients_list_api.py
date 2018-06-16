@@ -17,7 +17,7 @@ class ClientsListApi(Resource):
             # print('Received incorrect data: ' + str(request.get_data()))
             abort(status.HTTP_400_BAD_REQUEST)
 
-        new_client = Client(name=input_data["name"], ip_address=input_data["ip_address"])
+        new_client = Client(name=input_data['name'], ip_address=input_data['ip_address'])
         if DbHelper.client_exists(new_client):
             abort(status.HTTP_409_CONFLICT)
 

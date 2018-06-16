@@ -4,8 +4,8 @@ import json
 
 class Dataset(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    client_id = db.Column(db.Integer, db.ForeignKey("client.id"))
-    client = db.relationship("Client", back_populates="datasets")
+    client_id = db.Column(db.Integer, db.ForeignKey('client.id'))
+    client = db.relationship('Client', back_populates='datasets')
     filename = db.Column(db.String(255))
     userdata = db.Column(db.Text)
 
@@ -31,9 +31,9 @@ class Dataset(db.Model):
         self.userdata = json.dumps(data)
 
     def json(self):
-        return {"id": self.id,
-                "client": self.client_id,
-                "filename": self.filename}
+        return {'id': self.id,
+                'client': self.client_id,
+                'filename': self.filename}
 
     def details_json(self):
         details = self.json()

@@ -25,7 +25,7 @@ class TestClientsListApi(unittest.TestCase):
         self.assertEqual(response.get_json(), [])
 
     def test_get_one_element_clients_list(self):
-        client = Client(name="Foo", ip_address="localhost")
+        client = Client(name='Foo', ip_address='localhost')
         db.session.add(client)
         db.session.commit()
 
@@ -36,8 +36,8 @@ class TestClientsListApi(unittest.TestCase):
         self.assertDictEqual(response_json[0], client.json())
 
     def test_get_multiple_clients(self):
-        db.session.add_all([Client(name="Foo", ip_address="localhost"),
-                            Client(name="Bar", ip_address="127.0.0.1")])
+        db.session.add_all([Client(name='Foo', ip_address='localhost'),
+                            Client(name='Bar', ip_address='127.0.0.1')])
         db.session.commit()
 
         response = self.client.get('/clients')
@@ -46,8 +46,8 @@ class TestClientsListApi(unittest.TestCase):
         self.assertEqual(len(response_json), 2)
 
     def test_create_client_successfully(self):
-        name = "Client1"
-        ip_address = "10.11.0.5"
+        name = 'Client1'
+        ip_address = '10.11.0.5'
         self.assertEqual(len(Client.query.filter(Client.name == name, Client.ip_address == ip_address).all()), 0)
 
         response = self.client.post('/clients', data=json.dumps({'name': name, 'ip_address': ip_address}),
@@ -57,14 +57,14 @@ class TestClientsListApi(unittest.TestCase):
         self.assertEqual(len(Client.query.filter(Client.name == name, Client.ip_address == ip_address).all()), 1)
 
     def test_client_not_created_because_of_wrong_input_data(self):
-        response = self.client.post('/clients', data=json.dumps({'name': "Foo"}),
+        response = self.client.post('/clients', data=json.dumps({'name': 'Foo'}),
                                     content_type='application/json')
         assert_status_code_equal(response, status.HTTP_400_BAD_REQUEST)
 
     def test_client_already_exists(self):
-        self.client.post('/clients', data=json.dumps({'name': "Client", 'ip_address': "localhost"}),
+        self.client.post('/clients', data=json.dumps({'name': 'Client', 'ip_address': 'localhost'}),
                          content_type='application/json')
-        response = self.client.post('/clients', data=json.dumps({'name': "Client", 'ip_address': "localhost"}),
+        response = self.client.post('/clients', data=json.dumps({'name': 'Client', 'ip_address': 'localhost'}),
                                     content_type='application/json')
         self.assertEqual(len(Client.query.all()), 1)
         assert_status_code_equal(response, status.HTTP_409_CONFLICT)

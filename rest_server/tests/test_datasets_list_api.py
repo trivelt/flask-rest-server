@@ -25,9 +25,9 @@ class TestDatasetsListApi(unittest.TestCase):
         self.assertEqual(response.get_json(), [])
 
     def test_get_nonempty_datasets_list(self):
-        client = Client(name="Client", ip_address="127.0.0.1")
-        first_dataset = Dataset(filename="test.mp3")
-        second_dataset = Dataset(filename="movie.mp4")
+        client = Client(name='Client', ip_address='127.0.0.1')
+        first_dataset = Dataset(filename='test.mp3')
+        second_dataset = Dataset(filename='movie.mp4')
         client.datasets = [first_dataset, second_dataset]
         db.session.add(client)
         db.session.commit()
@@ -41,11 +41,11 @@ class TestDatasetsListApi(unittest.TestCase):
         self.assertDictEqual(response_json[1], second_dataset.json())
 
     def test_add_dataset(self):
-        client = Client(name="Client", ip_address="127.0.0.1")
+        client = Client(name='Client', ip_address='127.0.0.1')
         db.session.add(client)
         db.session.commit()
 
-        filename = "foo.bar"
+        filename = 'foo.bar'
         response = self.client.post('/datasets', data=json.dumps({'client': client.id, 'filename': filename}),
                                     content_type='application/json')
         assert_successfully_created(response)
@@ -59,7 +59,7 @@ class TestDatasetsListApi(unittest.TestCase):
     def test_add_two_datasets_for_same_client_successfully(self):
         filename1 = 'foo.txt'
         filename2 = 'bar.txt'
-        client = Client(name="Client", ip_address="127.0.0.1")
+        client = Client(name='Client', ip_address='127.0.0.1')
         db.session.add(client)
         db.session.commit()
 
@@ -75,18 +75,18 @@ class TestDatasetsListApi(unittest.TestCase):
         self.assertEqual(client.datasets[1].filename, filename2)
 
     def test_dataset_not_created_because_of_missing_mandatory_parameter(self):
-        response = self.client.post('/datasets', data=json.dumps({'filename': "file.txt"}),
+        response = self.client.post('/datasets', data=json.dumps({'filename': 'file.txt'}),
                                     content_type='application/json')
         assert_status_code_equal(response, status.HTTP_400_BAD_REQUEST)
 
     def test_dataset_not_created_because_specified_client_not_exists(self):
-        response = self.client.post('/datasets', data=json.dumps({'client': 1, 'filename': "file.txt"}),
+        response = self.client.post('/datasets', data=json.dumps({'client': 1, 'filename': 'file.txt'}),
                                     content_type='application/json')
         assert_status_code_equal(response, status.HTTP_400_BAD_REQUEST)
 
     def test_dataset_not_created_because_already_exists(self):
-        filename = "test.txt"
-        client = Client(name="Client", ip_address="127.0.0.1")
+        filename = 'test.txt'
+        client = Client(name='Client', ip_address='127.0.0.1')
         db.session.add(client)
         client.datasets = [Dataset(filename=filename)]
         db.session.commit()
