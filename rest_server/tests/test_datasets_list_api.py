@@ -63,7 +63,7 @@ class TestDatasetsListApi(unittest.TestCase):
     def test_dataset_not_created_because_specified_client_not_exists(self):
         response = self.client.post('/datasets', data=json.dumps({'client': 1, 'filename': "file.txt"}),
                                     content_type='application/json')
-        assert_status_code_equal(response, status.HTTP_404_NOT_FOUND)
+        assert_status_code_equal(response, status.HTTP_400_BAD_REQUEST)
 
     def test_dataset_not_created_because_already_exists(self):
         filename = "test.txt"

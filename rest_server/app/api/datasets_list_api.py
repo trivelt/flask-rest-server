@@ -19,7 +19,7 @@ class DatasetsListApi(Resource):
 
         client_id = input_data['client']
         if not DbHelper.client_id_exists(client_id):
-            abort(status.HTTP_404_NOT_FOUND)
+            abort(status.HTTP_400_BAD_REQUEST)
 
         new_dataset = Dataset(filename=input_data['filename'])
         client = DbHelper.get_client(client_id)
