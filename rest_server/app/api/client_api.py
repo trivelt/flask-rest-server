@@ -27,7 +27,7 @@ class ClientApi(Resource):
 
     def delete(self, id):
         if not DbHelper.client_id_exists(id):
-            return abort(status.HTTP_400_BAD_REQUEST)
+            return abort(status.HTTP_404_NOT_FOUND)
 
         Client.query.filter_by(id=id).delete()
         db.session.commit()

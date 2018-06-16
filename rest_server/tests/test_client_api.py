@@ -54,7 +54,7 @@ class TestClientApi(unittest.TestCase):
 
     def test_cannot_delete_nonexistent_client(self):
         response = self.client.delete('/clients/10')
-        assert_status_code_equal(response, status.HTTP_400_BAD_REQUEST)
+        assert_status_code_equal(response, status.HTTP_404_NOT_FOUND)
 
     def test_delete_client_successfully(self):
         response = self.client.post('/clients', data=json.dumps({'name': "Client", 'ip_address': "localhost"}),
