@@ -15,6 +15,7 @@ class TestDatasetsListApi(unittest.TestCase):
         prepare_app(api)
 
     def tearDown(self):
+        db.session.commit()
         db.drop_all()
         self.app.app_context().push()
 
