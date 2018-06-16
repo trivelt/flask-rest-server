@@ -16,7 +16,7 @@ class ClientApi(Resource):
 
     def patch(self, id):
         if not DbHelper.client_id_exists(id):
-            return abort(status.HTTP_400_BAD_REQUEST)
+            return abort(status.HTTP_404_NOT_FOUND)
 
         json_data = request.get_json()
         client = DbHelper.get_client(id)

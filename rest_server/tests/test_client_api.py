@@ -17,10 +17,25 @@ class TestClientApi(unittest.TestCase):
         db.drop_all()
         self.app.app_context().push()
 
+    def test_cannot_get_nonexistent_client(self):
+        response = self.client.get('/clients/10')
+        assert_status_code_equal(response, status.HTTP_404_NOT_FOUND)
+
+    def test_get_client_successfully(self):
+        client = Client(name='TestClient', ip_address='172.0.15.3')
+        db.session.add(client)
+        db.session.commit()
+
+        response = self.client.get('/clients/1')
+
+        assert_success(response)
+        response_json = response.get_json()
+        self.assertEqual(response_json, client.json())
+
     def test_cannot_patch_nonexistent_client(self):
         response = self.client.patch('/clients/10', data=json.dumps({'name': 'Client', 'ip_address': 'localhost'}),
                                      content_type='application/json')
-        assert_status_code_equal(response, status.HTTP_400_BAD_REQUEST)
+        assert_status_code_equal(response, status.HTTP_404_NOT_FOUND)
 
     def test_patch_client_correctly(self):
         client_id = 1
