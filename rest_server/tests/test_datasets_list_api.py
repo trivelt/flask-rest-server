@@ -55,6 +55,24 @@ class TestDatasetsListApi(unittest.TestCase):
         self.assertEqual(dataset.client, client)
         self.assertEqual(dataset.filename, filename)
 
+    def test_add_two_datasets_for_same_client_successfully(self):
+        filename1 = 'foo.txt'
+        filename2 = 'bar.txt'
+        client = Client(name="Client", ip_address="127.0.0.1")
+        db.session.add(client)
+        db.session.commit()
+
+        response = self.client.post('/datasets', data=json.dumps({'client': client.id, 'filename': filename1}),
+                                    content_type='application/json')
+        assert_successfully_created(response)
+        response = self.client.post('/datasets', data=json.dumps({'client': client.id, 'filename': filename2}),
+                                    content_type='application/json')
+        assert_successfully_created(response)
+
+        self.assertEqual(len(client.datasets), 2)
+        self.assertEqual(client.datasets[0].filename, filename1)
+        self.assertEqual(client.datasets[1].filename, filename2)
+
     def test_dataset_not_created_because_of_wrong_input_data(self):
         response = self.client.post('/datasets', data=json.dumps({'filename': "file.txt"}),
                                     content_type='application/json')
