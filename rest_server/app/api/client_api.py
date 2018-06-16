@@ -12,11 +12,11 @@ class ClientApi(Resource):
             client = Client.query.filter(Client.id == id).one()
             return jsonify(client.details_json())
         except:
-            abort(status.HTTP_404_NOT_FOUND)
+            abort(status.HTTP_404_NOT_FOUND, "Could not find client %s" % id)
 
     def patch(self, id):
         if not DbHelper.client_id_exists(id):
-            return abort(status.HTTP_404_NOT_FOUND)
+            return abort(status.HTTP_404_NOT_FOUND, "Could not patch non existent client")
 
         json_data = request.get_json()
         client = DbHelper.get_client(id)
@@ -30,7 +30,7 @@ class ClientApi(Resource):
 
     def delete(self, id):
         if not DbHelper.client_id_exists(id):
-            return abort(status.HTTP_404_NOT_FOUND)
+            abort(status.HTTP_404_NOT_FOUND, "Could not delete non existent client")
 
         Client.query.filter_by(id=id).delete()
         db.session.commit()

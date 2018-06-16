@@ -12,11 +12,11 @@ class DatasetApi(Resource):
             dataset = Dataset.query.filter_by(id=id).one()
             return jsonify(dataset.details_json())
         except:
-            abort(status.HTTP_404_NOT_FOUND)
+            abort(status.HTTP_404_NOT_FOUND, "Could not find dataset %s" % id)
 
     def patch(self, id):
         if not DbHelper.dataset_id_exists(id):
-            abort(status.HTTP_404_NOT_FOUND)
+            abort(status.HTTP_404_NOT_FOUND, "Could not patch non existent dataset")
 
         json_data = request.get_json()
         dataset = DbHelper.get_dataset(id)
@@ -24,7 +24,7 @@ class DatasetApi(Resource):
         if 'client' in json_data:
             client_id = json_data['client']
             if not DbHelper.client_id_exists(client_id):
-                abort(status.HTTP_400_BAD_REQUEST)
+                abort(status.HTTP_400_BAD_REQUEST, "Specified client %s does not exist" % client_id)
             dataset.client_id = client_id
         if 'filename' in json_data:
             dataset.filename = json_data['filename']
@@ -35,7 +35,7 @@ class DatasetApi(Resource):
 
     def delete(self, id):
         if not DbHelper.dataset_id_exists(id):
-            abort(status.HTTP_404_NOT_FOUND)
+            abort(status.HTTP_404_NOT_FOUND, "Could not delete non existent dataset")
 
         Dataset.query.filter_by(id=id).delete()
         db.session.commit()

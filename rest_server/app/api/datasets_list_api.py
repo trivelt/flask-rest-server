@@ -14,19 +14,19 @@ class DatasetsListApi(Resource):
     def post(self):
         input_data = request.get_json()
         if self._invalid_data():
-            # print('Received incorrect data: ' + str(request.get_data()))
-            abort(status.HTTP_400_BAD_REQUEST)
+            abort(status.HTTP_400_BAD_REQUEST, "Received incorrect data: %s" % str(request.get_data()))
 
         client_id = input_data['client']
         if not DbHelper.client_id_exists(client_id):
-            abort(status.HTTP_400_BAD_REQUEST)
+            abort(status.HTTP_400_BAD_REQUEST, "Specified client %s does not exist" % client_id)
 
         new_dataset = Dataset(filename=input_data['filename'])
         self._insert_metadata(input_data, new_dataset)
         client = DbHelper.get_client(client_id)
 
         if DbHelper.client_has_dataset(client, new_dataset):
-            abort(status.HTTP_409_CONFLICT)
+            abort(status.HTTP_409_CONFLICT, "Could not overwrite existing dataset. "
+                                            "Use PATCH to modify resource or DELETE to remove it")
 
         if not client.datasets:
             client.datasets = [new_dataset]
