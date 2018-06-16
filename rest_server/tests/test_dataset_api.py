@@ -24,12 +24,13 @@ class TestDatasetApi(unittest.TestCase):
 
     def test_get_dataset_successfully(self):
         dataset = Dataset(client_id=1, filename='foo.txt')
+        dataset.set_userdata({'key': 'value'})
         db.session.add(dataset)
         db.session.commit()
 
         response = self.client.get('/datasets/1')
         assert_success(response)
-        self.assertEqual(response.get_json(), dataset.json())
+        self.assertEqual(response.get_json(), dataset.details_json())
 
     def test_cannot_patch_nonexistent_dataset(self):
         response = self.client.patch('/datasets/1', data=json.dumps({'client': 1, 'filename': 'foo.txt'}),

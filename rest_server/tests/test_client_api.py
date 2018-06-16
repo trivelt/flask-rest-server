@@ -30,7 +30,7 @@ class TestClientApi(unittest.TestCase):
 
         assert_success(response)
         response_json = response.get_json()
-        self.assertEqual(response_json, client.json())
+        self.assertEqual(response_json, client.details_json())
 
     def test_cannot_patch_nonexistent_client(self):
         response = self.client.patch('/clients/10', data=json.dumps({'name': 'Client', 'ip_address': 'localhost'}),

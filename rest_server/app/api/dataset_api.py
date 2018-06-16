@@ -10,7 +10,7 @@ class DatasetApi(Resource):
     def get(self, id):
         try:
             dataset = Dataset.query.filter_by(id=id).one()
-            return jsonify(dataset.json())
+            return jsonify(dataset.details_json())
         except:
             abort(status.HTTP_404_NOT_FOUND)
 

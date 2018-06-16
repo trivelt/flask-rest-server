@@ -15,3 +15,8 @@ class Client(db.Model):
         return {"id": self.id,
                 "name": self.name,
                 "ip_address": self.ip_address}
+
+    def details_json(self):
+        details = self.json()
+        details.update({'datasets': [dataset.id for dataset in self.datasets]})
+        return details

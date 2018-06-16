@@ -10,7 +10,7 @@ class ClientApi(Resource):
     def get(self, id):
         try:
             client = Client.query.filter(Client.id == id).one()
-            return jsonify(client.json())
+            return jsonify(client.details_json())
         except:
             abort(status.HTTP_404_NOT_FOUND)
 

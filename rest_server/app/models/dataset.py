@@ -25,12 +25,17 @@ class Dataset(db.Model):
             return None
 
     def get_userdata(self):
-        return json.loads(self.userdata)
+        return json.loads(self.userdata) if self.userdata else {}
 
     def set_userdata(self, data):
         self.userdata = json.dumps(data)
 
     def json(self):
         return {"id": self.id,
-                "client_id": self.client_id,
+                "client": self.client_id,
                 "filename": self.filename}
+
+    def details_json(self):
+        details = self.json()
+        details.update(self.get_userdata())
+        return details
