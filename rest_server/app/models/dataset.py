@@ -1,4 +1,5 @@
 from app import db
+import json
 
 
 class Dataset(db.Model):
@@ -10,6 +11,24 @@ class Dataset(db.Model):
 
     def __repr__(self):
         return "<Dataset(client=%s, filename=%s>" % (str(self.client), self.filename)
+
+    def get_keys(self):
+        try:
+            return list(json.loads(self.userdata).keys())
+        except:
+            return []
+
+    def get_value(self, key):
+        try:
+            return json.loads(self.userdata)[key]
+        except:
+            return None
+
+    def get_userdata(self):
+        return json.loads(self.userdata)
+
+    def set_userdata(self, data):
+        self.userdata = json.dumps(data)
 
     def json(self):
         return {"id": self.id,

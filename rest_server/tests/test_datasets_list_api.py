@@ -73,7 +73,7 @@ class TestDatasetsListApi(unittest.TestCase):
         self.assertEqual(client.datasets[0].filename, filename1)
         self.assertEqual(client.datasets[1].filename, filename2)
 
-    def test_dataset_not_created_because_of_wrong_input_data(self):
+    def test_dataset_not_created_because_of_missing_mandatory_parameter(self):
         response = self.client.post('/datasets', data=json.dumps({'filename': "file.txt"}),
                                     content_type='application/json')
         assert_status_code_equal(response, status.HTTP_400_BAD_REQUEST)
@@ -94,3 +94,23 @@ class TestDatasetsListApi(unittest.TestCase):
                                     content_type='application/json')
 
         assert_status_code_equal(response, status.HTTP_409_CONFLICT)
+
+    def test_create_dataset_with_userdefined_metadata(self):
+        key = 'someKey'
+        value = 'someValue'
+        second_key ='key2'
+        second_value = 'val'
+        client = Client(name='Client', ip_address='127.0.0.1')
+        db.session.add(client)
+        db.session.commit()
+
+        response = self.client.post('/datasets',
+                                    data=json.dumps({'client': client.id, 'filename': 'foo.txt',
+                                                     key: value, second_key: second_value}),
+                                    content_type='application/json')
+
+        assert_successfully_created(response)
+        dataset = Dataset.query.first()
+        assert_unordered_list_equal(dataset.get_keys(), [key, second_key])
+        self.assertEqual(dataset.get_value(key), value)
+        self.assertEqual(dataset.get_value(second_key), second_value)

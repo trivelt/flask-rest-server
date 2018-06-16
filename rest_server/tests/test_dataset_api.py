@@ -49,6 +49,36 @@ class TestDatasetApi(unittest.TestCase):
         assert_status_code_equal(response, status.HTTP_204_NO_CONTENT)
         self.assertEqual(dataset.filename, new_filename)
 
+    def test_patch_adding_userdefined_metadata(self):
+        key = 'some_key'
+        value = 'some_value'
+        dataset = Dataset(client_id=1, filename='foo.txt')
+        db.session.add(dataset)
+        db.session.commit()
+
+        response = self.client.patch('/datasets/' + str(dataset.id),
+                                     data=json.dumps({key: value}),
+                                     content_type='application/json')
+
+        assert_status_code_equal(response, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(dataset.get_value(key), value)
+
+    def test_patch_overwriting_userdefined_metadata(self):
+        key = 'some_key'
+        value = 'some_value'
+        new_value = 'new value'
+        dataset = Dataset(client_id=1, filename='foo.txt')
+        dataset.set_userdata({key: value})
+        db.session.add(dataset)
+        db.session.commit()
+
+        response = self.client.patch('/datasets/' + str(dataset.id),
+                                     data=json.dumps({key: new_value}),
+                                     content_type='application/json')
+
+        assert_status_code_equal(response, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(dataset.get_value(key), new_value)
+
     def test_patch_changing_owner_of_dataset(self):
         client1 = Client(name='Client1', ip_address='127.0.0.1')
         client2 = Client(name='Client2', ip_address='127.0.0.2')

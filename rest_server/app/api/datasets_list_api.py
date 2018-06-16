@@ -22,6 +22,7 @@ class DatasetsListApi(Resource):
             abort(status.HTTP_400_BAD_REQUEST)
 
         new_dataset = Dataset(filename=input_data['filename'])
+        self._insert_metadata(input_data, new_dataset)
         client = DbHelper.get_client(client_id)
 
         if DbHelper.client_has_dataset(client, new_dataset):
@@ -35,9 +36,15 @@ class DatasetsListApi(Resource):
 
         return '', status.HTTP_201_CREATED
 
-
     def _invalid_data(self):
         json_data = request.get_json()
         if json_data is None:
             return True
         return not ('client' in json_data and 'filename' in json_data)
+
+    def _insert_metadata(self, input, dataset):
+        metadata_dict = {}
+        for key, value in input.items():
+            if key not in ['client', 'filename']:
+                metadata_dict[key] = value
+        dataset.set_userdata(metadata_dict)

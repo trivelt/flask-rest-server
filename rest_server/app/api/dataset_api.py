@@ -5,6 +5,7 @@ from flask_restful import Resource
 from flask_api import status
 from flask import jsonify, abort, request
 
+
 class DatasetApi(Resource):
     def get(self, id):
         try:
@@ -27,6 +28,7 @@ class DatasetApi(Resource):
             dataset.client_id = client_id
         if 'filename' in json_data:
             dataset.filename = json_data['filename']
+        self._update_metadata(json_data, dataset)
         db.session.commit()
 
         return '', status.HTTP_204_NO_CONTENT
@@ -38,3 +40,14 @@ class DatasetApi(Resource):
         Dataset.query.filter_by(id=id).delete()
         db.session.commit()
         return '', status.HTTP_204_NO_CONTENT
+
+    def _update_metadata(self, input, dataset):
+        metadata_dict = {}
+        for key, value in input.items():
+            if key not in ['client', 'filename']:
+                metadata_dict[key] = value
+        if dataset.userdata:
+            userdata_dict = dataset.get_userdata()
+            userdata_dict.update(metadata_dict)
+            metadata_dict = userdata_dict
+        dataset.set_userdata(metadata_dict)
