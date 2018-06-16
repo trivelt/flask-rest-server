@@ -1,4 +1,6 @@
 from app.models.client import Client
+from app.models.dataset import Dataset
+
 
 class DbHelper(object):
 
@@ -20,3 +22,11 @@ class DbHelper(object):
             if client_dataset.filename == dataset.filename:
                 return True
         return False
+
+    @staticmethod
+    def dataset_id_exists(id):
+        return Dataset.query.filter_by(id=id).count() > 0
+
+    @staticmethod
+    def get_dataset(id):
+        return Dataset.query.filter_by(id=id).one()
