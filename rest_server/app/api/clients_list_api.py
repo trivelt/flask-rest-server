@@ -13,23 +13,22 @@ class ClientsListApi(Resource):
 
     def post(self):
         input_data = request.get_json()
-        if self._invalid_data():
+        if self._invalid_data(input_data):
             abort(status.HTTP_400_BAD_REQUEST, "Received incorrect data: %s" % str(request.get_data()))
 
         new_client = Client(name=input_data['name'], ip_address=input_data['ip_address'])
         if DbHelper.client_exists(new_client):
             abort(status.HTTP_409_CONFLICT, "Could not overwrite existing client. "
                                             "Use PATCH to modify resource or DELETE to remove it")
-        try:
-            db.session.add(new_client)
-            db.session.commit()
-            return '', status.HTTP_201_CREATED
-        except Exception as e:
-            # print("Exception: " + str(e))
-            return '', status.HTTP_500_INTERNAL_SERVER_ERROR
 
-    def _invalid_data(self):
-        json_data = request.get_json()
+        return self._add_client(new_client)
+
+    def _invalid_data(self, json_data):
         if json_data is None:
             return True
         return not ('name' in json_data and 'ip_address' in json_data)
+
+    def _add_client(self, client):
+        db.session.add(client)
+        db.session.commit()
+        return '', status.HTTP_201_CREATED

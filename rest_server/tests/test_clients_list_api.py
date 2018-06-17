@@ -15,7 +15,7 @@ class TestClientsListApi(unittest.TestCase):
         prepare_app(api)
 
     def tearDown(self):
-        db.session.commit()
+        db.session.rollback()
         db.drop_all()
         self.app.app_context().push()
 
@@ -68,11 +68,3 @@ class TestClientsListApi(unittest.TestCase):
                                     content_type='application/json')
         self.assertEqual(len(Client.query.all()), 1)
         assert_status_code_equal(response, status.HTTP_409_CONFLICT)
-
-
-    @mock.patch('app.db.session.add')
-    def test_internal_server_error_during_add_client(self, dbMock):
-        dbMock.side_effect = Exception()
-        response = self.client.post('/clients', data=json.dumps({'name': 10, 'ip_address': 20}),
-                                    content_type='application/json')
-        assert_status_code_equal(response, status.HTTP_500_INTERNAL_SERVER_ERROR)

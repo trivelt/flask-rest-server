@@ -17,6 +17,17 @@ class DatasetApi(Resource):
         if not dataset:
             abort(status.HTTP_404_NOT_FOUND, "Could not patch non existent dataset")
 
+        self._update_dataset(dataset)
+        return '', status.HTTP_204_NO_CONTENT
+
+    def delete(self, id):
+        if not DbHelper.dataset_id_exists(id):
+            abort(status.HTTP_404_NOT_FOUND, "Could not delete non existent dataset")
+
+        DbHelper.delete_dataset(id)
+        return '', status.HTTP_204_NO_CONTENT
+
+    def _update_dataset(self, dataset):
         json_data = request.get_json()
         if 'client' in json_data:
             client_id = json_data['client']
@@ -27,15 +38,6 @@ class DatasetApi(Resource):
             dataset.filename = json_data['filename']
         self._update_metadata(json_data, dataset)
         db.session.commit()
-
-        return '', status.HTTP_204_NO_CONTENT
-
-    def delete(self, id):
-        if not DbHelper.dataset_id_exists(id):
-            abort(status.HTTP_404_NOT_FOUND, "Could not delete non existent dataset")
-
-        DbHelper.delete_dataset(id)
-        return '', status.HTTP_204_NO_CONTENT
 
     def _update_metadata(self, input, dataset):
         metadata_dict = {}

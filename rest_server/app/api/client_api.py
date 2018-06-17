@@ -17,12 +17,7 @@ class ClientApi(Resource):
         if not client:
             return abort(status.HTTP_404_NOT_FOUND, "Could not patch non existent client")
 
-        json_data = request.get_json()
-        if 'name' in json_data:
-            client.name = json_data['name']
-        if 'ip_address' in json_data:
-            client.ip_address = json_data['ip_address']
-        db.session.commit()
+        self._update_client(client)
         return '', status.HTTP_204_NO_CONTENT
 
     def delete(self, id):
@@ -31,3 +26,11 @@ class ClientApi(Resource):
 
         DbHelper.delete_client(id)
         return '', status.HTTP_204_NO_CONTENT
+
+    def _update_client(self, client):
+        json_data = request.get_json()
+        if 'name' in json_data:
+            client.name = json_data['name']
+        if 'ip_address' in json_data:
+            client.ip_address = json_data['ip_address']
+        db.session.commit()
