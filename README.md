@@ -12,13 +12,13 @@ Small REST API created in Python with Flask and SQLAlchemy. Application uses SQL
 
 ## Models
 There are two models - **Client** and **Dataset** - containing following fields:
-1. Client
- a) name - full name of client
- b) IP address of client (IPv4 or IPv6 are allowed)
-2. Dataset
- a) client - ID of client being dataset's owner
- b) filename - name of data file (max. 255 characters)
- c) any other key-value pair (user-defined metadata)
+* Client
+  * name - full name of client
+  * ip_address - IP address of client (IPv4 or IPv6 are allowed)
+* Dataset
+  * client - ID of client being dataset's owner
+  * filename - name of data file (max. 255 characters)
+  * any other key-value pair (user-defined metadata)
 
 Each client can have multiple datasets, but single dataset can be connected only to one client.
 
