@@ -41,7 +41,7 @@ Each client can have multiple datasets, but single dataset can be connected only
 
 ## Requests
 
-Requests should be send with JSON in message's body. Full specification of all requests there is accessible in auto-generated Swager UI which is available at /api/spec.html (by default: http://127.0.0.1:5000/api/spec.html#!/spec) after starting REST server.
+Requests should be send with JSON in message's body. Full specification of all requests there is accessible in auto-generated Swager UI which is available at /api/spec.html (by default: http://127.0.0.1:5000/api/spec.html#!/spec) after starting REST server. It also allows for interacting with API without having to use the console tools. Just click "Try it out!" button to send your request directly to the server. 
 
 ![](https://raw.githubusercontent.com/trivelt/img-resources/master/flask-swagger.png)
 
