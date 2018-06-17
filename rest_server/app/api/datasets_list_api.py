@@ -13,8 +13,7 @@ class DatasetsListApi(Resource):
 
     def post(self):
         input_data = request.get_json()
-        if self._invalid_data(input_data):
-            abort(status.HTTP_400_BAD_REQUEST, "Received incorrect data: %s" % str(request.get_data()))
+        self._validate_data(input_data)
 
         client_id = input_data['client']
         client = DbHelper.get_client(client_id)
@@ -28,10 +27,11 @@ class DatasetsListApi(Resource):
 
         return self._add_dataset(client, new_dataset)
 
-    def _invalid_data(self, json_data):
+    def _validate_data(self, json_data):
         if json_data is None:
-            return True
-        return not ('client' in json_data and 'filename' in json_data)
+            abort(status.HTTP_400_BAD_REQUEST, "Received incorrect data: %s" % str(request.get_data()))
+        if not ('client' in json_data and 'filename' in json_data):
+            abort(status.HTTP_400_BAD_REQUEST, "Request does not contain all mandatory fields [client, filename]")
 
     def _create_dataset(self, json_data):
         dataset = Dataset(filename=json_data['filename'])

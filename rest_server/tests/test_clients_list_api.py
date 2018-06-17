@@ -25,7 +25,7 @@ class TestClientsListApi(unittest.TestCase):
         self.assertEqual(response.get_json(), [])
 
     def test_get_one_element_clients_list(self):
-        client = Client(name='Foo', ip_address='localhost')
+        client = Client(name='Foo', ip_address='127.0.0.1')
         db.session.add(client)
         db.session.commit()
 
@@ -36,7 +36,7 @@ class TestClientsListApi(unittest.TestCase):
         self.assertDictEqual(response_json[0], client.json())
 
     def test_get_multiple_clients(self):
-        db.session.add_all([Client(name='Foo', ip_address='localhost'),
+        db.session.add_all([Client(name='Foo', ip_address='172.10.0.2'),
                             Client(name='Bar', ip_address='127.0.0.1')])
         db.session.commit()
 
@@ -61,10 +61,16 @@ class TestClientsListApi(unittest.TestCase):
                                     content_type='application/json')
         assert_status_code_equal(response, status.HTTP_400_BAD_REQUEST)
 
+    def test_client_not_created_because_of_invalid_ip_address(self):
+        response = self.client.post('/clients', data=json.dumps({'name': 'Foo',
+                                                                 'ip_address': '1270.0.1'}),
+                                    content_type='application/json')
+        assert_status_code_equal(response, status.HTTP_400_BAD_REQUEST)
+
     def test_client_already_exists(self):
-        self.client.post('/clients', data=json.dumps({'name': 'Client', 'ip_address': 'localhost'}),
+        self.client.post('/clients', data=json.dumps({'name': 'Client', 'ip_address': '127.0.0.1'}),
                          content_type='application/json')
-        response = self.client.post('/clients', data=json.dumps({'name': 'Client', 'ip_address': 'localhost'}),
+        response = self.client.post('/clients', data=json.dumps({'name': 'Client', 'ip_address': '127.0.0.1'}),
                                     content_type='application/json')
         self.assertEqual(len(Client.query.all()), 1)
         assert_status_code_equal(response, status.HTTP_409_CONFLICT)

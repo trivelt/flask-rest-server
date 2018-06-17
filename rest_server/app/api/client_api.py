@@ -1,5 +1,6 @@
 from app import db
 from app.db_helper import DbHelper
+from app.data_validator import DataValidator
 from flask_restful import Resource
 from flask_api import status
 from flask import jsonify, abort, request
@@ -32,5 +33,8 @@ class ClientApi(Resource):
         if 'name' in json_data:
             client.name = json_data['name']
         if 'ip_address' in json_data:
-            client.ip_address = json_data['ip_address']
+            ip_address = json_data['ip_address']
+            if DataValidator.is_invalid_ip(ip_address):
+                abort(status.HTTP_400_BAD_REQUEST, "Invalid IP address %s" % str(ip_address))
+            client.ip_address = ip_address
         db.session.commit()

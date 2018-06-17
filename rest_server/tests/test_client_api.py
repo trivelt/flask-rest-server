@@ -34,7 +34,7 @@ class TestClientApi(unittest.TestCase):
         self.assertEqual(response_json, client.details_json())
 
     def test_cannot_patch_nonexistent_client(self):
-        response = self.client.patch('/clients/10', data=json.dumps({'name': 'Client', 'ip_address': 'localhost'}),
+        response = self.client.patch('/clients/10', data=json.dumps({'name': 'Client', 'ip_address': '127.0.0.1'}),
                                      content_type='application/json')
         assert_status_code_equal(response, status.HTTP_404_NOT_FOUND)
 
@@ -42,7 +42,7 @@ class TestClientApi(unittest.TestCase):
         client_id = 1
         new_name = 'NewClient'
 
-        response = self.client.post('/clients', data=json.dumps({'name': 'Client', 'ip_address': 'localhost'}),
+        response = self.client.post('/clients', data=json.dumps({'name': 'Client', 'ip_address': '127.0.0.1'}),
                                     content_type='application/json')
         assert_successfully_created(response)
         response = self.client.patch('/clients/' + str(client_id),
@@ -53,12 +53,21 @@ class TestClientApi(unittest.TestCase):
         client = Client.query.filter_by(id=client_id).first()
         self.assertEqual(client.name, new_name)
 
+    def test_cannot_patch_because_of_invalid_ip(self):
+        response = self.client.post('/clients', data=json.dumps({'name': 'Client', 'ip_address': '127.0.0.1'}),
+                                    content_type='application/json')
+        assert_successfully_created(response)
+        response = self.client.patch('/clients/1',
+                                     data=json.dumps({'ip_address': 'wrongadress'}),
+                                     content_type='application/json')
+        assert_status_code_equal(response, status.HTTP_400_BAD_REQUEST)
+
     def test_cannot_delete_nonexistent_client(self):
         response = self.client.delete('/clients/10')
         assert_status_code_equal(response, status.HTTP_404_NOT_FOUND)
 
     def test_delete_client_successfully(self):
-        response = self.client.post('/clients', data=json.dumps({'name': 'Client', 'ip_address': 'localhost'}),
+        response = self.client.post('/clients', data=json.dumps({'name': 'Client', 'ip_address': '127.0.0.1'}),
                                     content_type='application/json')
         assert_successfully_created(response)
 

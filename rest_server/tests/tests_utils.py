@@ -5,7 +5,7 @@ def assert_status_code_equal(response, expected):
     received = response.status
     if str(expected) in received:
         return
-    raise AssertionError("Status code not equal: " + str(expected) + " != " + received)
+    raise AssertionError("Status code not equal: " + received + " != " + str(expected))
 
 
 def assert_success(response):
