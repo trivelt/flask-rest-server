@@ -1,16 +1,25 @@
 from app import db
 from app.models.dataset import Dataset
 from app.db_helper import DbHelper
+import app.api.swagger_docs as docs
+from flask_restful_swagger import swagger
 from flask_restful import Resource
 from flask_api import status
 from flask import request, jsonify, abort
 
 
 class DatasetsListApi(Resource):
+    @swagger.operation(summary='Returns list of datasets')
     def get(self):
         datasets = [dataset.json() for dataset in Dataset.query.all()]
         return jsonify(datasets)
 
+    @swagger.operation(
+        summary='Creates new dataset',
+        parameters=[docs.DatasetFullBodyParam],
+        responseMessages=[docs.Error_BadRequest('Could not find specified client'),
+                          docs.Error_ResourceAlreadyExists]
+    )
     def post(self):
         input_data = request.get_json()
         self._validate_data(input_data)

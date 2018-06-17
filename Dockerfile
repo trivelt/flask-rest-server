@@ -5,6 +5,7 @@ RUN pip3 install \
     flask \
     flask-api \
     flask-restful \
+    flask-restful-swagger \
     flask-sqlalchemy \
     IPy \
     mock \

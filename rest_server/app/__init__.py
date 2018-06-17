@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_restful import Api
 from flask_sqlalchemy import SQLAlchemy
+from flask_restful_swagger import swagger
 
 db = SQLAlchemy()
 
@@ -21,7 +22,7 @@ def create_production_app(config_file):
     _load_config(app, config_file)
     db.init_app(app)
     app.app_context().push()
-    api = Api(app)
+    api = swagger.docs(Api(app), apiVersion='1.0', api_spec_url='/api/spec')
     return app, api
 
 

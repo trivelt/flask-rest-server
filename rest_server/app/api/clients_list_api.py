@@ -2,16 +2,25 @@ from app import db
 from app.models.client import Client
 from app.db_helper import DbHelper
 from app.data_validator import DataValidator
+import app.api.swagger_docs as docs
+from flask_restful_swagger import swagger
 from flask_restful import Resource
 from flask_api import status
 from flask import request, jsonify, abort
 
 
 class ClientsListApi(Resource):
+    @swagger.operation(summary='Returns list of clients')
     def get(self):
         clients = [client.json() for client in Client.query.all()]
         return jsonify(clients)
 
+    @swagger.operation(
+        summary='Creates new client',
+        parameters=[docs.ClientFullBodyParam],
+        responseMessages=[docs.Error_ResourceAlreadyExists,
+                          docs.Error_BadRequest("Invalid data")]
+    )
     def post(self):
         input_data = request.get_json()
         self._validate_data(input_data)
