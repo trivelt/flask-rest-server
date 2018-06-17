@@ -5,7 +5,6 @@ from app.models.client import Client
 from start_rest import prepare_app
 from tests.tests_utils import *
 import json
-import mock
 
 
 class TestClientsListApi(unittest.TestCase):
