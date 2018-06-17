@@ -1,5 +1,4 @@
 from app import db
-from app.models.dataset import Dataset
 from app.db_helper import DbHelper
 from flask_restful import Resource
 from flask_api import status
@@ -8,11 +7,10 @@ from flask import jsonify, abort, request
 
 class DatasetApi(Resource):
     def get(self, id):
-        try:
-            dataset = Dataset.query.filter_by(id=id).one()
-            return jsonify(dataset.details_json())
-        except:
+        dataset = DbHelper.get_dataset(id)
+        if not dataset:
             abort(status.HTTP_404_NOT_FOUND, "Could not find dataset %s" % id)
+        return jsonify(dataset.details_json())
 
     def patch(self, id):
         dataset = DbHelper.get_dataset(id)
@@ -36,8 +34,7 @@ class DatasetApi(Resource):
         if not DbHelper.dataset_id_exists(id):
             abort(status.HTTP_404_NOT_FOUND, "Could not delete non existent dataset")
 
-        Dataset.query.filter_by(id=id).delete()
-        db.session.commit()
+        DbHelper.delete_dataset(id)
         return '', status.HTTP_204_NO_CONTENT
 
     def _update_metadata(self, input, dataset):

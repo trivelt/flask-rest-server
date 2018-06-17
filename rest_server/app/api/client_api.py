@@ -1,5 +1,4 @@
 from app import db
-from app.models.client import Client
 from app.db_helper import DbHelper
 from flask_restful import Resource
 from flask_api import status
@@ -8,11 +7,10 @@ from flask import jsonify, abort, request
 
 class ClientApi(Resource):
     def get(self, id):
-        try:
-            client = Client.query.filter(Client.id == id).one()
-            return jsonify(client.details_json())
-        except:
+        client = DbHelper.get_client(id)
+        if not client:
             abort(status.HTTP_404_NOT_FOUND, "Could not find client %s" % id)
+        return jsonify(client.details_json())
 
     def patch(self, id):
         client = DbHelper.get_client(id)
@@ -31,6 +29,5 @@ class ClientApi(Resource):
         if not DbHelper.client_id_exists(id):
             abort(status.HTTP_404_NOT_FOUND, "Could not delete non existent client")
 
-        Client.query.filter_by(id=id).delete()
-        db.session.commit()
+        DbHelper.delete_client(id)
         return '', status.HTTP_204_NO_CONTENT
